@@ -1,0 +1,33 @@
+:root {
+  color-scheme: dark;
+  --bg: #0b0e16;
+  --card: #141926;
+  --key: #232a3d;
+  --key-hover: #2d3650;
+  --edge: #2b3350;
+  --ink: #e8ecf5;
+  --muted: #93a0bd;
+  --accent: #5ec8ff;
+  --ok: #34d399;
+  --warn: #fbbf24;
+  --bad: #f87171;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  background:
+    radial-gradient(900px 500px at 15% -10%, rgba(94, 200, 255, .12), transparent 60%),
+    radial-gradient(700px 500px at 100% 0%, rgba(120, 90, 255, .1), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

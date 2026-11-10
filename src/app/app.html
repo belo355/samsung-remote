@@ -1,0 +1,26 @@
+<div class="shell">
+  <header class="top">
+    <div class="logo" aria-hidden="true">📺</div>
+    <div>
+      <h1>Controle universal</h1>
+      <p>Samsung Smart TV · direto do navegador, sem servidor</p>
+    </div>
+  </header>
+
+  <main class="grid">
+    <app-remote-control class="remote-col" />
+    <div class="side">
+      <app-connection-panel />
+      <app-command-log />
+    </div>
+  </main>
+
+  <footer class="legal">
+    Funciona com TVs Samsung Tizen (2016+) na mesma rede Wi-Fi. A TV precisa estar ligada ou em espera de rede; este app
+    não consegue ligar uma TV totalmente desligada (Wake-on-LAN não é possível em navegadores).
+  </footer>
+</div>
+
+@if (tv.toast(); as msg) {
+  <div class="toast" role="status">{{ msg }}</div>
+}

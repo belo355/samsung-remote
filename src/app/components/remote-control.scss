@@ -1,0 +1,95 @@
+:host { display: block; }
+
+.remote {
+  background: linear-gradient(180deg, #1b2030, #12151f);
+  border: 1px solid var(--edge);
+  border-radius: 32px;
+  padding: 14px 16px 18px;
+  max-width: 380px;
+  margin: 0 auto;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .7), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+.tabs {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+  background: rgba(0, 0, 0, .3); padding: 4px; border-radius: 14px; margin-bottom: 14px;
+  button {
+    all: unset; cursor: pointer; text-align: center; font-size: 12.5px; font-weight: 600;
+    padding: 8px 2px; border-radius: 10px; color: var(--muted); transition: background .15s, color .15s;
+    &:hover { color: var(--ink); }
+    &.on { background: var(--key); color: var(--ink); box-shadow: 0 1px 0 rgba(255,255,255,.06) inset; }
+    &:focus-visible { outline: 2px solid var(--accent); }
+  }
+}
+
+.offline-note { margin: 0 0 10px; text-align: center; font-size: 12.5px; color: var(--warn); }
+
+.pane { display: flex; flex-direction: column; gap: 12px; min-height: 420px; }
+
+.row { display: grid; gap: 10px; }
+.row.top { grid-template-columns: 1fr 1fr 1fr; }
+.row.three { grid-template-columns: repeat(3, 1fr); }
+.row.four { grid-template-columns: repeat(4, 1fr); }
+.row.two { grid-template-columns: 1fr 1fr; }
+.row.one { grid-template-columns: 1fr; max-width: 120px; margin: 0 auto; width: 100%; }
+
+.mid {
+  display: grid; grid-template-columns: 62px 1fr 62px; gap: 10px; align-items: center; margin: 6px 0;
+}
+
+.rocker {
+  display: flex; flex-direction: column; align-items: stretch; justify-content: space-between;
+  background: var(--key); border: 1px solid var(--edge); border-radius: 999px; padding: 6px 4px; height: 170px;
+  .cap { text-align: center; font-size: 10px; letter-spacing: .12em; color: var(--muted); font-weight: 700; }
+}
+
+.dpad {
+  display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 6px;
+  aspect-ratio: 1; padding: 8px; border-radius: 50%; background: rgba(0, 0, 0, .28); border: 1px solid var(--edge);
+  .u { grid-area: 1 / 2; }
+  .l { grid-area: 2 / 1; }
+  .c { grid-area: 2 / 2; }
+  .r { grid-area: 2 / 3; }
+  .d { grid-area: 3 / 2; }
+}
+
+.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.numpad rc-key { font-size: 20px; }
+
+h3 { margin: 6px 0 0; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+.apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.app {
+  all: unset; box-sizing: border-box; cursor: pointer; color: #fff; text-align: center;
+  display: flex; flex-direction: column; gap: 2px; align-items: center; justify-content: center;
+  min-height: 66px; border-radius: 16px; transition: transform .08s, filter .15s;
+  .ag { font-size: 22px; font-weight: 800; line-height: 1; }
+  .an { font-size: 11px; font-weight: 600; opacity: .92; }
+  &:hover:not(:disabled) { filter: brightness(1.12); }
+  &:active:not(:disabled) { transform: scale(.96); }
+  &:disabled { opacity: .35; cursor: not-allowed; }
+  &:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+}
+
+.custom, .textform { display: flex; gap: 8px; }
+.textform { flex-direction: column; }
+input, textarea {
+  all: unset; box-sizing: border-box; flex: 1; min-width: 0; background: rgba(0,0,0,.35); color: var(--ink);
+  border: 1px solid var(--edge); border-radius: 12px; padding: 10px 12px; font-size: 14px;
+  &:focus { border-color: var(--accent); }
+}
+textarea { white-space: pre-wrap; resize: none; }
+.custom button, .send {
+  all: unset; box-sizing: border-box; cursor: pointer; text-align: center; font-weight: 700; font-size: 14px;
+  padding: 10px 16px; border-radius: 12px; background: var(--accent); color: #04141a;
+  &:disabled { opacity: .35; cursor: not-allowed; }
+  &:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+}
+
+.fine { margin: 0; font-size: 12px; color: var(--muted); line-height: 1.45; }
+.kbd { margin: 14px 0 0; font-size: 11px; color: var(--muted); text-align: center; line-height: 1.5; }
+
+@media (max-width: 420px) {
+  .remote { border-radius: 24px; padding: 12px; }
+  .mid { grid-template-columns: 54px 1fr 54px; }
+}

@@ -1,0 +1,115 @@
+<section class="card" aria-labelledby="conn-title">
+  <header>
+    <h2 id="conn-title">TV</h2>
+    <span class="chip" [attr.data-state]="tv.state()">
+      <i></i>
+      @switch (tv.state()) {
+        @case ('connected') { Conectado }
+        @case ('connecting') { Conectando… }
+        @case ('awaiting') { Aguardando TV… }
+        @case ('error') { Erro }
+        @default { Desconectado }
+      }
+    </span>
+  </header>
+
+  @if (tv.profiles().length > 0 && !showForm()) {
+    <div class="tvs" role="radiogroup" aria-label="TVs salvas">
+      @for (p of tv.profiles(); track p.id) {
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="tv.activeId() === p.id"
+          [class.on]="tv.activeId() === p.id"
+          (click)="tv.select(p.id)"
+        >
+          <b>{{ p.name }}</b>
+          <small>{{ p.demo ? 'simulada' : p.ip + (p.secure ? ' · wss' : ' · ws') }}</small>
+        </button>
+      }
+      <button type="button" class="add" (click)="newTv()">+ Nova TV</button>
+    </div>
+  }
+
+  @if (showForm()) {
+    <form class="form" (ngSubmit)="save(true)">
+      <label>
+        Nome
+        <input name="name" [(ngModel)]="name" autocomplete="off" />
+      </label>
+      <label>
+        Endereço IP da TV
+        <input
+          name="ip"
+          [(ngModel)]="ip"
+          placeholder="192.168.0.25"
+          inputmode="decimal"
+          autocomplete="off"
+          [class.bad]="ip && !ipValid()"
+        />
+        <small>TV: Configurações › Geral › Rede › Status da rede › Configurações de IP.</small>
+      </label>
+      <label>
+        Modo de conexão
+        <select name="secure" [(ngModel)]="secure">
+          <option [ngValue]="true">Seguro — wss :8002 (TVs 2018+, recomendado)</option>
+          <option [ngValue]="false">Padrão — ws :8001 (TVs mais antigas)</option>
+        </select>
+      </label>
+      @if (isHttps && !secure) {
+        <p class="note warn">Esta página está em HTTPS: o navegador bloqueia o modo ws://. Use o modo seguro.</p>
+      }
+      <div class="actions">
+        <button type="submit" class="primary" [disabled]="!ipValid()">Salvar e conectar</button>
+        @if (tv.profiles().length > 0) {
+          <button type="button" class="ghost" (click)="cancel()">Cancelar</button>
+        }
+      </div>
+    </form>
+  } @else if (tv.active(); as p) {
+    <div class="actions">
+      @if (tv.connected()) {
+        <button type="button" class="ghost" (click)="tv.disconnect()">Desconectar</button>
+      } @else {
+        <button type="button" class="primary" [disabled]="tv.busy()" (click)="tv.connect(p.id)">
+          {{ tv.busy() ? 'Conectando…' : 'Conectar' }}
+        </button>
+        @if (tv.busy()) {
+          <button type="button" class="ghost" (click)="tv.disconnect()">Cancelar</button>
+        }
+      }
+      @if (!p.demo) {
+        <button type="button" class="ghost" (click)="edit()">Editar</button>
+      }
+      <button type="button" class="ghost danger" (click)="remove()">Remover</button>
+    </div>
+  }
+
+  <p class="status" [attr.data-state]="tv.state()" role="status" aria-live="polite">{{ tv.statusText() }}</p>
+
+  @if (certUrl(); as url) {
+    @if (tv.state() === 'error' || tv.state() === 'connecting') {
+      <p class="note">
+        Primeira vez no modo seguro? A TV usa certificado próprio:
+        <a [href]="url" target="_blank" rel="noopener">abrir {{ url }}</a>, aceite o aviso do navegador e volte para conectar.
+      </p>
+    }
+  }
+
+  @if (tv.active(); as p) {
+    @if (p.token && !p.demo) {
+      <p class="note">
+        Token salvo neste navegador (não precisa autorizar de novo).
+        <button type="button" class="link" (click)="tv.forgetToken(p.id)">Esquecer token</button>
+      </p>
+    }
+  }
+
+  @if (!showForm() && tv.state() === 'disconnected' && tv.active() && !tv.active()!.demo) {
+    <p class="note">Na primeira conexão a TV mostra um pedido na tela: escolha <b>Permitir</b>.</p>
+  }
+
+  <footer>
+    <button type="button" class="link" (click)="demo()">Experimentar em modo demonstração</button>
+  </footer>
+</section>

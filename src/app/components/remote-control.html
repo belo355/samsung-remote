@@ -1,0 +1,154 @@
+<section class="remote" [class.offline]="!tv.connected()" aria-label="Controle remoto">
+  <div class="tabs" role="tablist">
+    @for (t of tabs; track t.id) {
+      <button
+        type="button"
+        role="tab"
+        [class.on]="tab() === t.id"
+        [attr.aria-selected]="tab() === t.id"
+        (click)="tab.set(t.id)"
+      >
+        {{ t.label }}
+      </button>
+    }
+  </div>
+
+  @if (!tv.connected()) {
+    <p class="offline-note">Conecte-se a uma TV para liberar os botões.</p>
+  }
+
+  <div class="pane">
+    @switch (tab()) {
+      @case ('main') {
+        <div class="row top">
+          <rc-key [key]="K.POWER" label="⏻" variant="power round" aria="Ligar / desligar" sub="Power" />
+          <rc-key [key]="K.SOURCE" label="⎆" sub="Fonte" aria="Fonte de entrada" />
+          <rc-key [key]="K.MUTE" label="🔇" sub="Mudo" aria="Mudo" />
+        </div>
+
+        <div class="mid">
+          <div class="rocker" aria-label="Volume">
+            <rc-key [key]="K.VOL_UP" label="+" aria="Volume +" variant="ghost" [repeat]="true" />
+            <span class="cap">VOL</span>
+            <rc-key [key]="K.VOL_DOWN" label="−" aria="Volume −" variant="ghost" [repeat]="true" />
+          </div>
+
+          <div class="dpad" aria-label="Navegação">
+            <rc-key class="u" [key]="K.UP" label="▲" aria="Cima" [repeat]="true" />
+            <rc-key class="l" [key]="K.LEFT" label="◀" aria="Esquerda" [repeat]="true" />
+            <rc-key class="c" [key]="K.ENTER" label="OK" variant="accent round" aria="Confirmar" />
+            <rc-key class="r" [key]="K.RIGHT" label="▶" aria="Direita" [repeat]="true" />
+            <rc-key class="d" [key]="K.DOWN" label="▼" aria="Baixo" [repeat]="true" />
+          </div>
+
+          <div class="rocker" aria-label="Canais">
+            <rc-key [key]="K.CH_UP" label="˄" aria="Canal +" variant="ghost" [repeat]="true" />
+            <span class="cap">CH</span>
+            <rc-key [key]="K.CH_DOWN" label="˅" aria="Canal −" variant="ghost" [repeat]="true" />
+          </div>
+        </div>
+
+        <div class="row three">
+          <rc-key [key]="K.RETURN" label="↩" sub="Voltar" aria="Voltar" />
+          <rc-key [key]="K.HOME" label="⌂" sub="Home" aria="Home" />
+          <rc-key [key]="K.MENU" label="☰" sub="Menu" aria="Menu" />
+        </div>
+        <div class="row three">
+          <rc-key [key]="K.INFO" label="ⓘ" sub="Info" aria="Informações" />
+          <rc-key [key]="K.GUIDE" label="▤" sub="Guia" aria="Guia de programação" />
+          <rc-key [key]="K.TOOLS" label="⚙" sub="Tools" aria="Ferramentas" />
+        </div>
+        <div class="row one">
+          <rc-key [key]="K.EXIT" label="✕" sub="Sair" aria="Sair" variant="ghost" />
+        </div>
+      }
+
+      @case ('numbers') {
+        <div class="numpad">
+          @for (d of digits; track d) {
+            <rc-key [key]="'KEY_' + d" [label]="d" />
+          }
+          <rc-key [key]="K.PRE_CH" label="⟲" sub="Anterior" aria="Canal anterior" />
+          <rc-key key="KEY_0" label="0" />
+          <rc-key [key]="K.CH_LIST" label="≣" sub="Lista" aria="Lista de canais" />
+        </div>
+        <div class="row four colors">
+          <rc-key [key]="K.RED" label="A" variant="red" aria="Vermelho" />
+          <rc-key [key]="K.GREEN" label="B" variant="green" aria="Verde" />
+          <rc-key [key]="K.YELLOW" label="C" variant="yellow" aria="Amarelo" />
+          <rc-key [key]="K.BLUE" label="D" variant="blue" aria="Azul" />
+        </div>
+        <div class="row two">
+          <rc-key [key]="K.SUBTITLE" label="CC" sub="Legenda" aria="Legenda" />
+          <rc-key [key]="K.EXIT" label="✕" sub="Sair" aria="Sair" />
+        </div>
+      }
+
+      @case ('media') {
+        <div class="row four media">
+          <rc-key [key]="K.REWIND" label="⏪" aria="Retroceder" />
+          <rc-key [key]="K.PLAY" label="▶" aria="Reproduzir" variant="accent" />
+          <rc-key [key]="K.PAUSE" label="⏸" aria="Pausar" />
+          <rc-key [key]="K.FF" label="⏩" aria="Avançar" />
+        </div>
+        <div class="row two">
+          <rc-key [key]="K.STOP" label="⏹" sub="Parar" aria="Parar" />
+          <rc-key [key]="K.REC" label="⏺" sub="Gravar" aria="Gravar" />
+        </div>
+
+        <h3>Aplicativos</h3>
+        <div class="apps">
+          @for (a of apps; track a.appId) {
+            <button
+              type="button"
+              class="app"
+              [style.background]="a.color"
+              [disabled]="!tv.connected()"
+              (click)="tv.launchApp(a.appId, a.name)"
+            >
+              <span class="ag">{{ a.glyph }}</span>
+              <span class="an">{{ a.name }}</span>
+            </button>
+          }
+        </div>
+        <form class="custom" (ngSubmit)="launchCustom()">
+          <input
+            name="appid"
+            [(ngModel)]="customAppId"
+            placeholder="Outro app: ID (ex.: 3201907018807)"
+            autocomplete="off"
+            inputmode="numeric"
+            aria-label="ID do aplicativo"
+          />
+          <button type="submit" [disabled]="!tv.connected() || !customAppId.trim()">Abrir</button>
+        </form>
+        <p class="fine">IDs podem variar por modelo e região; se um app não abrir, use o campo acima.</p>
+      }
+
+      @case ('text') {
+        <p class="fine">
+          Abra um campo de busca na TV (ela mostra o teclado na tela) e envie o texto daqui.
+        </p>
+        <form class="textform" (ngSubmit)="sendText()">
+          <textarea
+            name="text"
+            [(ngModel)]="text"
+            rows="3"
+            placeholder="Digite para buscar na TV…"
+            aria-label="Texto para enviar à TV"
+          ></textarea>
+          <div class="row two">
+            <button type="submit" class="send" [disabled]="!tv.connected() || !text.trim()">Enviar texto</button>
+            <rc-key [key]="K.ENTER" label="↵" sub="Confirmar" aria="Confirmar" />
+          </div>
+        </form>
+      }
+    }
+  </div>
+
+  @if (tv.connected()) {
+    <p class="kbd">
+      Teclado: setas · Enter · Esc · + / − volume · M mudo · PgUp/PgDn canal · 0–9 · H home
+    </p>
+  }
+</section>
